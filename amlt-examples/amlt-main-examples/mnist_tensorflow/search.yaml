@@ -1,0 +1,41 @@
+description: Tensorflow MNIST example
+
+target:
+  service: amlk8s
+  # run "amlt target list amlk8s" to list the names of available AMLK8s targets
+  name: itpseasiav100cl
+  vc: resrchvc
+
+environment:
+  image: tensorflow/tensorflow:1.12.3-gpu-py3
+
+code:
+  local_dir: $CONFIG_DIR/src
+
+data:
+  # You need to run "python src/download_data.py" beforehand.
+  #   Don't forget to run with --upload-data
+
+  # The data will be uploaded to your default storage.
+  #   Check ``multi_storage.yaml'' for more flexibility.
+  local_dir: $CONFIG_DIR/data/
+  remote_dir: data/mnist_tensorflow
+
+search:
+  job_template:
+    # you may use {random_string:s} to avoid job name collisions
+    # {auto:4s} generates drop_0.9_lear_0.5, .. etc
+    name: "search_{experiment_name:s}_{auto:4s}"
+    sku: G1
+    command:
+    - python main.py --learning_rate {learning_rate} --dropout {dropout}
+    # The following line is equivalent to the above:
+    # - python main.py --learning_rate {learning_rate} --dropout {dropout} --data-dir /mnt/default/data/mnist_tensorflow
+  max_trials: 2
+  type: random
+  params:
+    - name: dropout
+      spec: hyperdrive # the default value
+      values: choice(0.9, 0.75)
+    - name: learning_rate
+      values: log_uniform(0.001, 0.5)

@@ -1,0 +1,25 @@
+description: Distributed Pytorch MNIST examples
+
+environment:
+  image: amlt-sing/pytorch
+  setup:
+  - pip install pytorch-lightning==1.5.0 --user
+
+code:
+  local_dir: $CONFIG_DIR/src
+
+# In Singularity, the backend starts process automatically, in this case
+# 8 processes are started automatically. Therefore, we can't use mp.spawn in the 
+# code to duplicate processes. Similarly, we can't use "torch.distributed.launch" or "deepspeed".
+
+# Simply removing torch.distributed.launch or deepspeed and passing $LOCAL_RANK to your script should
+# be enough to ensure compatibility.
+jobs:
+- name: distributed_job_sing
+  sku: 2xG4
+  command:
+  - python main.py
+- name: distributed_gan
+  sku: 2xG4
+  command:
+  - python lightning_gan.py --gpus 4 --nodes 2 --output_dir $$AMLT_OUTPUT_DIR

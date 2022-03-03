@@ -1,0 +1,20 @@
+description: Distributed Pytorch MNIST examples
+
+environment:
+  image: horovod/horovod:0.19.1-tf2.1.0-torch1.4.0-mxnet1.6.0-py3.6-gpu
+  setup:
+  - pip install pytorch-lightning==1.5.0 --user
+
+code:
+  local_dir: $CONFIG_DIR/src
+
+jobs:
+# by default, enables mpi and returns N processes per node where N is number of gpus
+- name: distributed_job
+  sku: 2xG4
+  command:
+  - python main.py
+- name: distributed_gan
+  sku: 2xG4
+  command:
+  - python lightning_gan.py --gpus 4 --nodes 2 --output_dir $$AMLT_OUTPUT_DIR

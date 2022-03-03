@@ -1,0 +1,35 @@
+description: Hyperdrive Finetuning Map on MNIST
+
+target:
+  # fine-tuning and evaluation can be done independently of where the model was trained
+  service: amlk8s
+  name: itpeusp40cl
+  vc: resrchvc
+
+environment:
+  image: pytorch/pytorch:1.5-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/src
+
+search:
+  job_template:
+    name: search_{experiment_name:s}_{auto:3s}
+    sku: G1
+    command:
+    - python finetune_model.py $$AMLT_MAP_INPUT_DIR/model.amlt --lr {lr}
+  type: hyperdrive
+  max_trials: 6
+  parallel_trials: 2
+  metrics:
+    - name: accuracy/test  # the string you will be using to log the metric to optimize
+      goal: maximize  # whether to maximize or minimize the metric
+  sampling: random # how to explore the hyperparameter space: random, grid or bayesian
+  params:
+    - name: lr
+      spec: hyperdrive
+      values: uniform(0.001, 0.5)

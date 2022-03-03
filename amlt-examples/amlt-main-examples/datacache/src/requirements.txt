@@ -1,0 +1,2 @@
+-i https://azuremlsdktestpypi.azureedge.net/azureml-core-run-submit-tests/45210218
+azureml-core==0.1.0.45210218

@@ -1,0 +1,65 @@
+description: PhillyTools ConfigFile for s3prl
+
+# AML
+target:
+  name: itpwus2v100cl
+#  name: itplabrr1cl1
+#  name: itpeastusv100cl2
+#  name: itpeastusv100cl
+#  name: itpeusp100cl
+#  name: itpwus2v100cl
+#  name: itpseasiav100cl
+#  name: itpscusv100cl
+#  name: itpeusp40cl
+  service: amlk8s
+  vc: gcrprojvc1
+  #vc: resrchvc
+  #queue: bonus
+
+
+environment:
+  image: wumark/speech_transducer:torch1.6_wav2vec
+
+# azure blob configuration
+storage:
+  data_blob:
+    storage_account_name: tsprmblob01wus2
+    container_name: data
+    mount_dir: /datablob
+    mount_options:
+    - -o
+    - attr_timeout=240
+    - -o
+    - entry_timeout=240
+    - -o
+    - negative_timeout=120
+    - -o
+    - allow_other
+    - --log-level=LOG_WARNING
+    - --file-cache-timeout-in-seconds=3600
+    is_output: true
+  blob_model:
+    storage_account_name: tsstd01wus2
+    container_name: models
+    mount_dir: /modelblob
+  #info:
+  #  output:
+  #    container_name: teamdrive
+  #    storage_account_name: msranlcmtteamdrive
+  #    mount_dir: /datablob/users
+  #    is_output: true
+
+# code dir
+code:
+  local_dir: /home/v-shure/amlk8swav2vec/code
+
+# job configuration
+jobs:
+  - name: training
+    sku: G8
+    sku_count: 1
+    aml_mpirun:
+      process_count_per_node: 8
+      communicator: "OpenMpi"
+    command:
+      - bash roberta.sh

@@ -1,0 +1,20 @@
+description: Simple sleep job without code
+
+target:
+  service: amlk8s
+  # run "amlt target list amlk8s" to list the names of available AMLK8s targets
+  name: itpseasiav100cl
+  vc: resrchvc
+
+
+environment:
+  image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard --user
+
+
+jobs:
+- name: sleep_job
+  sku: G1
+  command:
+  - sleep 1

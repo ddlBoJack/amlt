@@ -1,0 +1,30 @@
+description: Hyperparam sweep on MNIST
+
+environment:
+  image: pytorch/pytorch:1.5-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard --user
+
+code:
+  local_dir: $CONFIG_DIR/src
+
+# data:
+#   data upload is not required for this example
+
+search:
+  job_template:
+    # you may use {random_string:s} to avoid job name collisions
+    # {auto:3s} generates lr_0.00000_mom_0.5, .. etc
+    # {auto:2s} generates lr_0.00000_mo_0.5, .. etc
+    name: search_{experiment_name:s}_{auto:3s}
+    sku: G1
+    command:
+    - python main.py --momentum {momentum} --lr {lr}
+  type: random
+  max_trials: 2
+  params:
+    - name: momentum
+      values: [0.5, 0.9, 0.99]  # or equivalently choice(0.5, 0.9, 0.99)
+    - name: lr
+      # spec: hyperdrive # the default value
+      values: log_uniform(0.001, 0.5)

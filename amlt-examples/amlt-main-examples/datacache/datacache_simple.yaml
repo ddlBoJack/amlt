@@ -1,0 +1,49 @@
+description: Simple PyTorch job on MNIST on AML
+
+target:
+  service: aml
+  # run "amlt target list aml" to list the names of available AML targets
+  name: name
+
+environment:
+  image: pytorch/pytorch:1.5-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard
+
+storage:
+  # storage account and container where the ImageNet tar balls are contained
+  data:
+    storage_account_name: storage0account0name
+    container_name: container0name
+
+datacache:
+  # datacache section
+  train:
+    storage_id: data                  # required, references the id from above storage section
+    remote_path: imagenet/train       # required, path of data on datastore, can be a folder or a file
+    datacachestore_name: dcs          # required, name of datacache store, the datacache store must be registered in the workspace
+    replica: 1                        # optional, default 1, number of cache replicas to be used during training, cannot be greater
+                                      # than the total number of partitions in the datacache store
+    mount_path: /datacache/data       # optional, default /datacache/{id}, mount path on the training vm, 
+                                      # if specified, must start with /datacache/ prefix
+  val:
+    storage_id: data
+    datacachestore_name: dcs
+    remote_path: imagenet/val
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/src
+
+# data:
+#   data upload is not required for this example
+
+# list of jobs to run
+jobs:
+- name: test
+  # Please be considerate when submitting to clusters with higher capacity nodes
+  # sku must match 'GPUS_PER_VM' on the target cluster
+  sku: G1
+  command:
+  - python test.py

@@ -1,0 +1,53 @@
+description: Example using distinct storage accounts for code, data and results.
+
+target:
+  service: amlk8s
+  name: itpseasiav100cl
+  vc: resrchvc
+
+environment:
+  image: tensorflow/tensorflow:1.12.3-gpu-py3
+
+# azure storage configuration - this example use advanced concepts on how to manage storage in amlt
+storage:
+  # You can tell AMLT to store results in a different container optimized for writing.
+  output:
+    storage_account_name: my0storage0account
+    container_name: my0output0container
+    # you can change the mount path to reference in your code
+    # mount_dir: /mnt/output
+    # mount_options: ["--file-cache-timeout-in-seconds=60"]
+
+  # If data is in a shared container for example, we can mount the storage to a specific path
+  shared_datastore:
+    storage_account_name: shared0storage0account
+    container_name: shared0container0name
+    # you can change the mount path to reference in your code
+    # mount_dir: /mnt/shared_data
+
+code:
+  # Code will be stored in the default storage
+  local_dir: $CONFIG_DIR/src/
+
+data:
+  # You need to run "python src/download_data.py" beforehand to generate the dataset
+  #  to be uploaded, don't forget to run with --upload-data.
+
+  # The data will be uploaded to your default storage. You can specify another ``storage_id''
+  #  option with the id of an entry in ``storage'', e.g. storage_id: shared_datastore
+  #  in that case, AMLT will look for data in that specific storage.
+  local_dir: $CONFIG_DIR/data/
+  remote_dir: data/mnist_tensorflow
+  # optionally, you can also set a different location for data
+  storage_id: shared_datastore
+
+# We can access our data directly by referring to the mount point of your storage.
+jobs:
+- name: simple_job_data_default
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.1 --data_dir /mnt/default/data/mnist_tensorflow
+- name: simple_job_data_shared
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.1 --data_dir /mnt/shared_datastore/data/mnist_tensorflow

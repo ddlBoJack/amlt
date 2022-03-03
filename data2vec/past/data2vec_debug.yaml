@@ -1,0 +1,56 @@
+description: data2vec_debug
+
+# AML
+target:
+#  name: itpeusp100cl
+#  name: itpeusp100cl
+# name: itplabrl1cl1
+#  name: itplabrr1cl1
+  name: itpscusv100cl
+#  name: itpseasiav100cl
+#  name: itpwus2cpucl1
+#  name: ms-shared
+  service: amlk8s
+  #vc: gcrprojvc1
+  vc: resrchvc
+
+
+environment:
+  image: wumark/speech_transducer:torch1.6_wav2vec
+
+# azure blob configuration
+storage:
+  data_blob:
+    storage_account_name: tsprmblob01scus
+    container_name: data
+    mount_dir: /datablob
+    mount_options:
+    - -o
+    - attr_timeout=240
+    - -o
+    - entry_timeout=240
+    - -o
+    - negative_timeout=120
+    - -o
+    - allow_other
+    - --log-level=LOG_WARNING
+    - --file-cache-timeout-in-seconds=0
+  # blob_model:
+  #   storage_account_name: tsstd01wus2
+  #   container_name: models
+  #   mount_dir: /modelblob
+
+# code dir
+code:
+  local_dir: /home/v-ziyangma/github/fairseq/
+
+# job configuration
+jobs:
+  - name: training
+    sku: G4
+    #sku_count: 1
+    aml_mpirun:
+      process_count_per_node: 4
+      communicator: "OpenMpi"
+    command:
+      - bash submit_script/bash_scripts/debug/debug.sh

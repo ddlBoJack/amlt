@@ -1,0 +1,40 @@
+description: Tensorflow MNIST example
+
+target:
+  service: amlk8s
+  name: itpseasiav100cl
+  vc: resrchvc
+
+environment:
+  image: tensorflow/tensorflow:1.12.3-gpu-py3
+
+code:
+  code_upload: True
+  local_dir: $CONFIG_DIR/src/
+
+data:
+  # You need to run "python src/download_data.py" beforehand
+  # to generate the dataset to be uploaded
+  local_dir: $CONFIG_DIR/data/
+  remote_dir: data/mnist_tensorflow
+
+jobs:
+  # A unique name for each job
+- name: simple_job_lr_05
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.5
+  #  Extra optional parameters to be sent through the API during job submission
+  submit_args: &my_args
+    # Max numbers of attempts to retry job. Default: 5. Maximum: 5. Minimum: 1.
+    max_attempts: 1
+    # The maximum runtime for the job. Specifying a value of 0 implies reservation, and the job will continue to run until killed explicitly.
+    timeout: 100
+- name: simple_job_lr_01
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.1
+  submit_args:
+    <<: *my_args
+    # we can change any argument!
+    max_attempts: 5

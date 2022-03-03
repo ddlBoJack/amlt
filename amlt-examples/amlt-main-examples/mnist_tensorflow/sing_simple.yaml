@@ -1,0 +1,36 @@
+description: Tensorflow MNIST example
+
+target:
+  service: sing
+
+environment:
+  image: amlt-sing/tensorflow-2.3
+
+code:
+  # upload the code
+  local_dir: $CONFIG_DIR/src/
+
+data:
+  # You need to run "python src/download_data.py" beforehand
+  # to generate the dataset to be uploaded
+  # don't forget to run with --upload-data
+  local_dir: $CONFIG_DIR/data/
+
+  # The data will be uploaded to your default storage.
+  #   Check ``multi_storage.yaml'' for more flexibility.
+  remote_dir: data/mnist_tensorflow
+
+# schedule two simple jobs, names for each job should be different:
+jobs:
+- name: simple_job_lr_05
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.5
+  # The following line is equivalent to the above:
+  # - python main.py --learning_rate 0.5 --data_dir /mnt/default/data/mnist_tensorflow
+- name: simple_job_lr_01
+  sku: G1
+  command:
+  - python main.py --learning_rate 0.1
+  # The following line is equivalent to the above:
+  # - python main.py --learning_rate 0.5 --data_dir /mnt/default/data/mnist_tensorflow

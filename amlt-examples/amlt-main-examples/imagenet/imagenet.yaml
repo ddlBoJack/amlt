@@ -1,0 +1,28 @@
+description: Loading the ImageNet validation set
+
+environment:
+  image: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/src
+
+storage:
+  # storage account and container where the ImageNet tar balls are contained
+  data:
+    storage_account_name: imagenet0storage0account
+    container_name: imagenet0container
+
+data:
+  # location of the tar balls relative to the container
+  remote_dir: imagenet0location
+  storage_id: data
+
+# job loading the imagenet validation dataset
+jobs:
+- name: loading_imagenet
+  # cpu job
+  sku: G0
+  command:
+  - python imagenet.py

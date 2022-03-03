@@ -1,0 +1,44 @@
+description: Tensorflow MNIST example
+
+target:
+  service: amlk8s
+  # run "amlt target list amlk8s" to list the names of available AMLK8s targets
+  name: itpeusp40cl
+  vc: resrchvc
+
+environment:
+  image: tensorflow/tensorflow:1.15.2-gpu-py3
+
+code:
+  # upload the code
+  local_dir: $CONFIG_DIR/src/
+
+data:
+  # You need to run "python src/download_data.py" beforehand
+  # to generate the dataset to be uploaded
+  # don't forget to run with --upload-data
+  local_dir: $CONFIG_DIR/data/
+
+  # The data will be uploaded to your default storage.
+  #   Check ``multi_storage.yaml'' for more flexibility.
+  remote_dir: data/mnist_tensorflow
+
+search:
+  job_template:
+    name: search_{experiment_name:s}_{auto:3s}
+    sku: G1
+    command:
+    - python main.py --learning_rate {lr}
+  type: hyperdrive # random, grid or hyperdrive. Default: hyperdrive
+  max_trials: 6
+  parallel_trials: 2
+  metrics: # optimization objective. Required for bayesian sampling and early_termination, ignored otherwise
+    - name: accuracy
+      goal: maximize
+  sampling: bayesian # how to explore the hyperparameter space: random, grid or bayesian. Default: bayesian
+  # hyperdrive:
+  #   early_termination: BanditPolicy(slack_factor=0.15, evaluation_interval=1, delay_evaluation=10) # optional. Not supported with bayesian sampling
+  params:
+    - name: lr
+      spec: hyperdrive
+      values: uniform(0.01, 0.5)

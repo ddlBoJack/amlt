@@ -1,0 +1,29 @@
+description: Simple Map Job
+
+target:
+  # fine-tuning and evaluation can be done independently of where the model was trained
+  service: amlk8s
+  name: itp-p40-eus
+  vc: relevance2
+
+environment:
+  image: pytorch/pytorch:1.5-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard
+
+code:
+  # local directory of the fine-tuning and evaluation scripts
+  local_dir: $CONFIG_DIR/src
+
+# run the map commands once you have a model ready
+jobs:
+  # fine-tune on the QMNIST dataset
+- name: finetune
+  sku: G1
+  command:
+  - python finetune_model.py $$AMLT_MAP_INPUT_DIR/model.amlt
+  # use 'amlt results finetune-EXP_NAME' to retrieve finetuned model and evaluation results
+- name: evaluate
+  sku: G1
+  command:
+  - python evaluate_model.py $$AMLT_MAP_INPUT_DIR/finetuned_model.amlt -o $$AMLT_MAP_INPUT_DIR

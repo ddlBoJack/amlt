@@ -1,0 +1,22 @@
+description: Simple PyTorch job on MNIST on Singularity
+
+environment:
+  image: amlt-sing/pytorch
+  setup:
+    - pip install tensorboard --user
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/src
+
+# list of jobs to run, we run 2 jobs in this example
+jobs:
+- name: high_lr
+  sku: G1
+  command:
+  - python main.py --lr 0.5
+- name: low_lr
+  sku: G1
+  command:
+  - python main.py --lr 0.1

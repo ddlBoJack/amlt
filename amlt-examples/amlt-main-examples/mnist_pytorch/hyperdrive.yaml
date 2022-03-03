@@ -1,0 +1,36 @@
+description: Hyperdrive Run on MNIST
+
+target:
+  service: amlk8s
+  # run "amlt target list amlk8s" to list the names of available AMLK8s targets
+  name: itpeusp40cl
+  vc: resrchvc
+
+environment:
+  image: pytorch/pytorch:1.5-cuda10.1-cudnn7-devel
+  setup:
+    - pip install tensorboard
+
+code:
+  # local directory of the code. this will be uploaded to the server.
+  # $CONFIG_DIR is expanded to the directory of this config file
+  local_dir: $CONFIG_DIR/src
+
+search:
+  job_template:
+    name: search_{experiment_name:s}_{auto:3s}
+    sku: G1
+    command:
+    - python main.py --lr {lr}
+  max_trials: 4
+  parallel_trials: 2
+  # max_duration_hours: 1.5 # optional, duration in hours of the hyperdrive experiment. Defaults to 336 (ie 2 weeks). Max of 1440 (ie 60 days)
+  metrics: # optimization objective. Required for bayesian sampling and early_termination, ignored otherwise
+    - name: accuracy/test
+      goal: maximize
+  sampling: bayesian # how to explore the hyperparameter space: random, grid or bayesian. Default: bayesian
+  # early_termination: BanditPolicy(slack_factor=0.15, evaluation_interval=1, delay_evaluation=10) # optional. Not supported with bayesian sampling
+  params:
+    - name: lr
+      # spec: hyperdrive # the default value
+      values: uniform(0.001, 0.5)
