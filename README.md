@@ -35,7 +35,7 @@ amlt run data2vec/data2vec.yaml data2vec_train_960h_devclean
 3. go back to edit the amlt yaml file to submit the job.
     ```
     code:
-      local_dir: where you git pull the upper code.
+      local_dir: where you git clone the upper code.
     jobs:
     - name: data2vec_960h_devclean
       sku: 2xG8
