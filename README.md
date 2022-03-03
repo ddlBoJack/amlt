@@ -45,5 +45,6 @@ amlt run data2vec/data2vec.yaml data2vec_train_960h_devclean
 
 ## Pay Attention
 
-1. we do NOT need to specify the sku_count and the aml_mpirun in the lateset version of amlt.
+1. The file submit_script/ITP_bash_scripts/data2vec/data2vec_audio_conda.sh setup a conda environment for the user before running the job.
 2. We use the yaml file in config/data2vec to specify the parameters. Instead, the command line parameters are not like "--max-tokens 3800000". It is like "dataset.max_tokens=3800000". Writing the low-change-frequency parameters in the yaml file is recommended.
+3. we do NOT need to specify the sku_count and the aml_mpirun in the lateset version of amlt.
