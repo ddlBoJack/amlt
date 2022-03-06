@@ -1,5 +1,4 @@
-description: data2vec_960h_devother
-
+description: wav2vec2_960h_devclean
 # AML
 target:
   name: itplabrr1cl1
@@ -44,14 +43,14 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_960h_devother
-  sku: 2xG8
+- name: wav2vec2_960h_devclean
+  sku: G8
   # sku_count: 1 #deprecated
   # aml_mpirun:
     # process_count_per_node: 4
     # communicator: "OpenMpi"
   command:
     # - bash submit_script/debug/debug.sh
-    - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_train.sh
+    - bash submit_script/ITP_bash_scripts/wav2vec/wav2vec2_train.sh
     # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_localcode.sh
     # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_text.sh
