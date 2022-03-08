@@ -1,29 +1,22 @@
-description: PhillyTools ConfigFile for s3prl
+description: roberta_phone_pretrain
 
 # AML
 target:
-  name: itpwus2v100cl
-#  name: itplabrr1cl1
-#  name: itpeastusv100cl2
-#  name: itpeastusv100cl
-#  name: itpeusp100cl
-#  name: itpwus2v100cl
-#  name: itpseasiav100cl
-#  name: itpscusv100cl
-#  name: itpeusp40cl
+  name: itplabrr1cl1
   service: amlk8s
-  vc: gcrprojvc1
-  #vc: resrchvc
-  #queue: bonus
+  vc: resrchvc
+  # cluster_group: MS-Shared
 
 
 environment:
   image: wumark/speech_transducer:torch1.6_wav2vec
+  setup:
+    - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_conda.sh
 
 # azure blob configuration
 storage:
   data_blob:
-    storage_account_name: tsprmblob01wus2
+    storage_account_name: tsprmblob01scus
     container_name: data
     mount_dir: /datablob
     mount_options:
@@ -37,11 +30,6 @@ storage:
     - allow_other
     - --log-level=LOG_WARNING
     - --file-cache-timeout-in-seconds=3600
-    is_output: true
-  blob_model:
-    storage_account_name: tsstd01wus2
-    container_name: models
-    mount_dir: /modelblob
   #info:
   #  output:
   #    container_name: teamdrive
@@ -51,15 +39,11 @@ storage:
 
 # code dir
 code:
-  local_dir: /home/v-shure/amlk8swav2vec/code
+  local_dir: ~/github/fairseq/
 
 # job configuration
 jobs:
-  - name: training
+  - name: roberta_phone_pretrain
     sku: G8
-    sku_count: 1
-    aml_mpirun:
-      process_count_per_node: 8
-      communicator: "OpenMpi"
     command:
-      - bash roberta.sh
+      - bash submit_script/ITP_bash_scripts/roberta/roberta_phone_pretrain.sh
