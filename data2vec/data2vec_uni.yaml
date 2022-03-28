@@ -1,8 +1,8 @@
-description: data2vec_960h_devother_finetuning_320w
+description: data2vec_uni_100h_text_190w
 
 # AML
 target:
-  name: itpscusv100cl
+  name: itplabrr1cl1
   service: amlk8s
   vc: resrchvc
   # cluster_group: MS-Shared
@@ -44,12 +44,12 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_960h_devother_finetuning_320w
-  sku: G8
+- name: data2vec_uni_100h_text_190w
+  sku: 2xG8
   # sku_count: 1 #deprecated
   # aml_mpirun:
     # process_count_per_node: 4
     # communicator: "OpenMpi"
   command:
     # - bash submit_script/debug/debug.sh
-    - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_finetuning.sh
+    - bash data2vec_uni/submit.sh
