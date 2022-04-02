@@ -1,0 +1,59 @@
+description: baseline
+
+
+
+target:
+service: aisc
+
+
+
+environment:
+image: lozhou/fairseq_aml_docker:torch1.8_fairseq
+
+
+
+code:
+# local directory of the code. this will be uploaded to the server.
+# $CONFIG_DIR is expanded to the directory of this config file
+local_dir: $CONFIG_DIR/../../
+
+
+
+# data:
+# data upload is not required for this example
+storage:
+data_blob:
+storage_account_name: tsprmblob01scus
+container_name: data
+mount_dir: /datablob
+
+
+
+jobs:
+- aml_mpirun:
+communicator: OpenMpi
+command:
+- realpath .
+- bash /tmp/code/bash_scripts/pretrain/prepare.sh
+- cd /datablob/users/v-zhuoyao/code/sp_fairseq
+- realpath .
+- bash cross_attention_shared_librispeech960_small_text_encoder_new_attn_new_text_mask.sh
+#- cp /tmp/code/bash_scripts/pretrain/cross_attention_shared_librispeech960_small_text_encoder_new_attn_new_text_mask.sh /datablob/users/v-zhuoyao/code/sp_fairseq
+#- chmod 777 cross_attention_shared_librispeech960_small_text_encoder_new_attn_new_text_mask.sh
+#- bash cross_attention_shared_librispeech960_small_text_encoder_new_attn_new_text_mask.sh
+name: baseline
+sku: 4xG8
+submit_args:
+constraints:
+- tag: connectivityDomain
+type: uniqueConstraint
+container_args:
+shm_size: 512g
+memory: 2048g
+env:
+HOROVOD_HIERARCHICAL_ALLREDUCE: 1
+MKL_THREADING_LAYER: GNU
+NCCL_ASYNC_ERROR_HANDLING: 1
+NCCL_DEBUG: INFO
+NCCL_IB_DISABLE: 0
+NCCL_IB_TIMEOUT: 22

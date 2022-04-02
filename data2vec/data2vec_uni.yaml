@@ -1,11 +1,11 @@
-description: data2vec_uni_100h_text_190w
+description: data2vec_uni_100h_text_do_ema_190w_2x16G8
 
 # AML
 target:
-  name: itplabrr1cl1
+  name: ms-shared
   service: amlk8s
-  vc: resrchvc
-  # cluster_group: MS-Shared
+  # vc: resrchvc
+  cluster_group: MS-Shared
 
 environment:
   image: wumark/speech_transducer:torch1.6_wav2vec
@@ -44,8 +44,8 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_uni_100h_text_190w
-  sku: 2xG8
+- name: data2vec_uni_100h_text_do_ema_190w_2x16G8
+  sku: 2x16G8
   # sku_count: 1 #deprecated
   # aml_mpirun:
     # process_count_per_node: 4
