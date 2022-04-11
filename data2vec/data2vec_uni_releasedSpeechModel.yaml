@@ -1,4 +1,4 @@
-description: data2vec_960h_repreduce
+description: data2vec_uni_pretrain_100h_860h_textDoEma_releasedSpeechModel_190w_G8
 
 # AML
 target:
@@ -15,8 +15,7 @@ environment:
   # registry: docker.io # any public registry can be specified here
   setup:
     - pip install --editable ./
-    # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_conda.sh
-    # - ./submit_script/ITP_bash_scripts/data2vec/install.sh
+  #   - ./submit_script/ITP_bash_scripts/data2vec/install.sh
 
 # azure blob configuration
 storage:
@@ -47,13 +46,13 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_960h_repreduce
-  sku: 2xG8
+- name: data2vec_uni_pretrain_100h_860h_textDoEma_releasedSpeechModel_190w_G8
+  sku: G8
   # sku_count: 1 #deprecated
   # aml_mpirun:
     # process_count_per_node: 4
     # communicator: "OpenMpi"
   command:
     # - bash submit_script/debug/debug.sh
-    - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining_reproduce.sh
+    - bash data2vec_uni/submit_pretrain_releasedSpeechModel.sh
     - sleep infinity
