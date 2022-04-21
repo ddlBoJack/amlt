@@ -1,14 +1,19 @@
-description: data2vec_960h_repreduce
+description: data2vec_uni_singularity_test
 
 target:
   name: msrresrchvc
   service: aisc
-  research_group: gcr-singularity-resrch
 
 environment:
-  image: sanyuanchen/data2vec:torch1.8
+  image: lozhou/fairseq_aml_docker:torch1.8_fairseq
+  # image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
+  # image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
+  # image: wumark/speech_transducer:torch1.6_wav2vec # past
+  # image: pytorch/pytorch:1.9.0-cuda10.2-cudnn7-devel
+  # registry: docker.io # any public registry can be specified here
   setup:
     - pip install --editable ./
+  #   - ./submit_script/ITP_bash_scripts/data2vec/install.sh
 
 code:
   # local directory of the code. this will be uploaded to the server.
@@ -20,34 +25,35 @@ storage:
     storage_account_name: tsprmblob01scus
     container_name: data
     mount_dir: /datablob
-    mount_options:
-    - -o
-    - attr_timeout=240
-    - -o
-    - entry_timeout=240
-    - -o
-    - negative_timeout=120
-    - -o
-    - allow_other
-    - --log-level=LOG_WARNING
-    - --file-cache-timeout-in-seconds=3600
+    # mount_options:
+    # - -o
+    # - attr_timeout=240
+    # - -o
+    # - entry_timeout=240
+    # - -o
+    # - negative_timeout=120
+    # - -o
+    # - allow_other
+    # - --log-level=LOG_WARNING
+    # - --file-cache-timeout-in-seconds=3600
 
 jobs:
-- aml_mpirun:
-    communicator: OpenMpi
-  name: data2vec_960h_repreduce
-  sku: 2xG8
-  submit_args:
-    constraints:
-    - tag: connectivityDomain
-      type: uniqueConstraint
-    env:
-      HOROVOD_HIERARCHICAL_ALLREDUCE: 1
-      MKL_THREADING_LAYER: GNU
-      NCCL_ASYNC_ERROR_HANDLING: 1
-      NCCL_DEBUG: INFO
-      NCCL_IB_DISABLE: 0
-      NCCL_IB_TIMEOUT: 22
+- name: data2vec_uni_singularity_test
+  sku: NCv3:16G4-V100-IB
+  # aml_mpirun:
+    # process_count_per_node: 0
+    # communicator: OpenMpi
+  # submit_args:
+  #   constraints:
+  #   - tag: connectivityDomain
+  #     type: uniqueConstraint
+  #   env:
+  #     HOROVOD_HIERARCHICAL_ALLREDUCE: 1
+  #     MKL_THREADING_LAYER: GNU
+  #     NCCL_ASYNC_ERROR_HANDLING: 1
+  #     NCCL_DEBUG: INFO
+  #     NCCL_IB_DISABLE: 0
+  #     NCCL_IB_TIMEOUT: 22
   command:
-  - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining_reproduce.sh
-  - sleep infinity
+  # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining_reproduce.sh
+    - sleep infinity

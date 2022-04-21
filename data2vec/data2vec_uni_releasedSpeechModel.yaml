@@ -1,16 +1,17 @@
-description: data2vec_uni_pretrain_100h_860h_textDoEma_releasedSpeechModel_190w_G8
+description: data2vec_uni_debug_G4
 
 # AML
 target:
-  name: itplabrr1cl1
+  name: itpeusp100cl
   service: amlk8s
   vc: resrchvc
   # cluster_group: MS-Shared
 
 environment:
-  # image: wumark/speech_transducer:a100_fairseq_kenlm
-  image: sanyuanchen/data2vec:torch1.8
-  # image: wumark/speech_transducer:torch1.6_wav2vec
+  # image: lozhou/fairseq_aml_docker:torch1.8_fairseq
+  image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
+  # image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
+  # image: wumark/speech_transducer:torch1.6_wav2vec # past
   # image: pytorch/pytorch:1.9.0-cuda10.2-cudnn7-devel
   # registry: docker.io # any public registry can be specified here
   setup:
@@ -46,13 +47,13 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_uni_pretrain_100h_860h_textDoEma_releasedSpeechModel_190w_G8
-  sku: G8
+- name: data2vec_uni_debug_G4
+  sku: G4
   # sku_count: 1 #deprecated
-  # aml_mpirun:
-    # process_count_per_node: 4
+  aml_mpirun:
+    process_count_per_node: 0
     # communicator: "OpenMpi"
   command:
     # - bash submit_script/debug/debug.sh
-    - bash data2vec_uni/submit_pretrain_releasedSpeechModel.sh
+    # - bash data2vec_uni/script/submit_pretrain_releasedSpeechModel.sh
     - sleep infinity

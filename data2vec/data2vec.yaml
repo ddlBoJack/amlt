@@ -1,4 +1,4 @@
-description: data2vec_960h_repreduce
+description: data2vec_960h_repreduce_G8
 
 # AML
 target:
@@ -47,8 +47,8 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_960h_repreduce
-  sku: 2xG8
+- name: data2vec_960h_repreduce_G8
+  sku: G8
   # sku_count: 1 #deprecated
   # aml_mpirun:
     # process_count_per_node: 4
