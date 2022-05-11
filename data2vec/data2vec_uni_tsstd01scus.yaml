@@ -1,4 +1,4 @@
-description: data2vec_audio_finetuning_search
+description: data2vec_uni_100h_860h_finetune_textDoEma_fromScatch_190w_2x32G8_textLoss05
 
 # AML
 target:
@@ -48,11 +48,11 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_audio_finetuning_search
+- name: data2vec_uni_100h_860h_finetune_textDoEma_fromScatch_190w_2x32G8_textLoss05
   sku: G8
-  # mpi: True
-  # process_count_per_node: 8
+  mpi: True
+  process_count_per_node: 1
   command:
     # - bash submit_script/debug/debug.sh
-    - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_finetuning_search.sh
+    - bash data2vec_uni/script/submit_finetune.sh
     - sleep infinity
