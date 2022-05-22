@@ -8,15 +8,15 @@ target:
   # cluster_group: MS-Shared
 
 environment:
-  # image: wumark/speech_transducer:a100_fairseq_kenlm
-  image: sanyuanchen/data2vec:torch1.8
-  # image: wumark/speech_transducer:torch1.6_wav2vec
+  # image: lozhou/fairseq_aml_docker:torch1.8_fairseq # can not itp decode
+  # image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
+  image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
+  # image: wumark/speech_transducer:torch1.6_wav2vec # past
   # image: pytorch/pytorch:1.9.0-cuda10.2-cudnn7-devel
   # registry: docker.io # any public registry can be specified here
   setup:
     - pip install --editable ./
-    # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_conda.sh
-    # - ./submit_script/ITP_bash_scripts/data2vec/install.sh
+    # - python setup.py build_ext --inplace
 
 # azure blob configuration
 storage:
@@ -24,21 +24,21 @@ storage:
     storage_account_name: tsprmblob01scus
     container_name: data
     mount_dir: /datablob
-    mount_options:
-    - -o
-    - attr_timeout=240
-    - -o
-    - entry_timeout=240
-    - -o
-    - negative_timeout=120
-    - -o
-    - allow_other
-    - --log-level=LOG_WARNING
-    - --file-cache-timeout-in-seconds=3600
-  # blob_model:
-  #   storage_account_name: tsstd01wus2
-  #   container_name: models
-  #   mount_dir: /modelblob
+    # mount_options:
+    # - -o
+    # - attr_timeout=240
+    # - -o
+    # - entry_timeout=240
+    # - -o
+    # - negative_timeout=120
+    # - -o
+    # - allow_other
+    # - --log-level=LOG_WARNING
+    # - --file-cache-timeout-in-seconds=3600
+  model_blob:
+    storage_account_name: tsstd01scus
+    container_name: models
+    mount_dir: /modelblob
 
 code:
   # local directory of the code. this will be uploaded to the server.
@@ -51,7 +51,7 @@ jobs:
   sku: G8
   # sku_count: 1 #deprecated
   # aml_mpirun:
-    # process_count_per_node: 4
+    # process_count_per_node: 8
     # communicator: "OpenMpi"
   command:
     # - bash submit_script/debug/debug.sh

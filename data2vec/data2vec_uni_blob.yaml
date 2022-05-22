@@ -1,14 +1,14 @@
-description: data2vec_uni_100h_860h_finetune_textDoEma_fromScatch_190w_2x32G8_textLoss05
+description: finetune
 
 # AML
 target:
-  name: itplabrr1cl1
+  name: itpeusp100cl
   service: amlk8s
   vc: resrchvc
   # cluster_group: MS-Shared
 
 environment:
-  # image: lozhou/fairseq_aml_docker:torch1.8_fairseq
+  # image: lozhou/fairseq_aml_docker:torch1.8_fairseq # can not itp decode
   image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
   # image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
   # image: wumark/speech_transducer:torch1.6_wav2vec # past
@@ -17,7 +17,7 @@ environment:
   setup:
     - pip install --editable ./
     - python setup.py build_ext --inplace
-  #   - ./submit_script/ITP_bash_scripts/data2vec/install.sh
+    # - ./submit_script/ITP_bash_scripts/data2vec/install.sh
 
 # azure blob configuration
 storage:
@@ -48,11 +48,14 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_uni_100h_860h_finetune_textDoEma_fromScatch_190w_2x32G8_textLoss05
-  sku: G8
-  mpi: True
-  process_count_per_node: 1
+- name: finetune
+  sku: G4
+  # sku_count: 2 #deprecated
+  # aml_mpirun:
+    # process_count_per_node: 0
+    # communicator: "OpenMpi"
   command:
-    # - bash submit_script/debug/debug.sh
-    - bash data2vec_uni/script/submit_finetune.sh
+    # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining_reproduce.sh
+    # - bash data2vec_uni/script/submit_finetune.sh
+    # - bash submit_script/debug/hold_sleep.sh
     - sleep infinity
