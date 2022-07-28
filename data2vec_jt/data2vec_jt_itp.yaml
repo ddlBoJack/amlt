@@ -1,4 +1,4 @@
-description: data2vec_uni_100h_860h_align_phn1_280w_2x32G8_beta0_finetune
+description: data2vec_jt_960h_960h_6text_6share_1add_50kstart_itp
 
 # AML
 target:
@@ -9,8 +9,8 @@ target:
 
 environment:
   # image: lozhou/fairseq_aml_docker:torch1.8_fairseq # can not itp decode
-  image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
-  # image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
+  # image: wumark/speech_transducer:a100_fairseq_kenlm # decoding
+  image: sanyuanchen/data2vec:torch1.8 # no_c10d, without cudnn
   # image: wumark/speech_transducer:torch1.6_wav2vec # past
   # image: pytorch/pytorch:1.9.0-cuda10.2-cudnn7-devel
   # registry: docker.io # any public registry can be specified here
@@ -48,7 +48,7 @@ code:
 
 # list of jobs to run
 jobs:
-- name: data2vec_uni_100h_860h_align_phn1_280w_2x32G8_beta0_finetune
+- name: data2vec_jt_960h_960h_6text_6share_1add_50kstart_itp
   sku: G8
   # sku_count: 2 #deprecated
   # aml_mpirun:
@@ -57,7 +57,6 @@ jobs:
   command:
     # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_finetuning_wandb.sh
     # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining.sh
-    # - bash data2vec_uni/script/submit_from_scratch.sh
-    - bash data2vec_uni/script/submit_finetune.sh
+    - bash data2vec_jt/script/submit_pretrain.sh
     # - bash submit_script/debug/hold_sleep.sh
     - sleep infinity
