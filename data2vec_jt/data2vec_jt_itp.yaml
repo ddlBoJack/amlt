@@ -1,4 +1,4 @@
-description: data2vec_jt_960h_960h_6text_6share_1add_50kstart_itp
+description: data2vec_jt_960h_960h_6text_6share_1add_0kstart
 
 # AML
 target:
@@ -16,7 +16,7 @@ environment:
   # registry: docker.io # any public registry can be specified here
   setup:
     - pip install --editable ./
-    - python setup.py build_ext --inplace
+    # - python setup.py build_ext --inplace
     # - ./submit_script/ITP_bash_scripts/data2vec/install.sh
 
 # azure blob configuration
@@ -47,16 +47,22 @@ code:
   local_dir: ~/github/fairseq/
 
 # list of jobs to run
-jobs:
-- name: data2vec_jt_960h_960h_6text_6share_1add_50kstart_itp
-  sku: G8
-  # sku_count: 2 #deprecated
-  # aml_mpirun:
-    # process_count_per_node: 0
-    # communicator: "OpenMpi"
-  command:
-    # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_finetuning_wandb.sh
-    # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining.sh
-    - bash data2vec_jt/script/submit_pretrain.sh
-    # - bash submit_script/debug/hold_sleep.sh
-    - sleep infinity
+search:
+  job_template:
+    name: data2vec_jt_960h_960h_6text_6share_1add_0kstart
+    sku: 2xG8
+    # sku_count: 2 #deprecated
+    aml_mpirun:
+      process_count_per_node: 8
+      # communicator: "OpenMpi"
+    command:
+      # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_finetuning_wandb.sh
+      # - bash submit_script/ITP_bash_scripts/data2vec/data2vec_audio_pretraining.sh
+      - bash data2vec_jt/script/submit_pretrain.sh
+      # - bash submit_script/debug/hold_sleep.sh
+      # - sleep infinity
+  type: grid
+  max_trials: 16
+  params:
+    - name: lr
+      values: []
